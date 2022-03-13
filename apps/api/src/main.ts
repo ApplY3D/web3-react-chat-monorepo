@@ -1,16 +1,49 @@
 import * as express from 'express';
-import { Message } from '@blockchain-chat/api-interfaces';
+import { v4 } from 'uuid';
+import { json } from 'body-parser';
+import { sign } from 'jsonwebtoken';
+import { verifySignature } from './verify-signature';
+import { accessTokenSecret } from './constants';
+import { authenticateEVM } from './middlewares';
 
 const app = express();
+app.use(json());
 
-const greeting: Message = { message: 'Welcome to api!' };
+const STORE = {};
 
-app.get('/api', (req, res) => {
-  res.send(greeting);
+app.get('/login-evm/message', authenticateEVM, (req, res) => {
+  const messageToSign = v4();
+  const address = req.headers.evm as string;
+
+  STORE[address] = messageToSign;
+
+  res.json({ message: messageToSign });
+});
+
+app.post('/login-evm', authenticateEVM, async (req, res) => {
+  const { signature } = req.body;
+  const address = req.headers.evm as string;
+
+  const message = STORE[address];
+
+  if (!message) {
+    return res.status(403).send('You must request login id first');
+  }
+
+  delete STORE[address];
+
+  const isValid = await verifySignature({ address, message, signature });
+
+  if (!isValid) {
+    return res.status(403).send('EVM signature invalid');
+  }
+
+  const jwt = sign({ evm: address }, accessTokenSecret);
+  res.json({ jwt });
 });
 
 const port = process.env.port || 3333;
 const server = app.listen(port, () => {
-  console.log('Listening at http://localhost:' + port + '/api');
+  console.log('Listening at http://localhost:' + port);
 });
 server.on('error', console.error);
