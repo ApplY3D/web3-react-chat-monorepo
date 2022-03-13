@@ -1,6 +1,26 @@
-
-
 # BlockchainChat
+
+## Launch app
+
+> Metamask should be installed for best experience
+
+### - Launch Frontend
+
+```bash
+yarn nx serve
+```
+
+### - Launch API
+
+```bash
+yarn nx serve api
+```
+
+### - Launch Socket
+
+```bash
+yarn nx serve socket
+```
 
 This project was generated using [Nx](https://nx.dev).
 
@@ -78,8 +98,6 @@ Run `nx graph` to see a diagram of the dependencies of your projects.
 ## Further help
 
 Visit the [Nx Documentation](https://nx.dev) to learn more.
-
-
 
 ## ☁ Nx Cloud
 
