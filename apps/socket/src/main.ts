@@ -27,3 +27,15 @@ io.use((socket, next) => {
   );
   next(new Error(status + ': ' + message));
 });
+
+io.on('connection', (socket) => {
+  socket.emit('connected', socket.id);
+
+  socket.on('CHAT:NEW_MESSAGE', (message: string) => {
+    socket.broadcast.emit('CHAT:NEW_MESSAGE', message);
+  });
+
+  socket.on('disconnect', () => {
+    console.log(socket.id, 'disconnect');
+  });
+});
