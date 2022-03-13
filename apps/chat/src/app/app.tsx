@@ -1,8 +1,13 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Message } from '@blockchain-chat/api-interfaces';
+import { Web3ReactProvider } from '@web3-react/core';
+import Account from './login-page';
+import getLibrary from '../getLibrary';
+import useEagerConnect from '../hooks/useEagerConnect';
 
 export const App = () => {
   const [m, setMessage] = useState<Message>({ message: '' });
+  const triedToEagerConnect = useEagerConnect();
 
   useEffect(() => {
     fetch('/api')
@@ -11,17 +16,9 @@ export const App = () => {
   }, []);
 
   return (
-    <>
-      <div style={{ textAlign: 'center' }}>
-        <h1>Welcome to chat!</h1>
-        <img
-          width="450"
-          src="https://raw.githubusercontent.com/nrwl/nx/master/images/nx-logo.png"
-          alt="Nx - Smart, Fast and Extensible Build System"
-        />
-      </div>
-      <div>{m.message}</div>
-    </>
+    <Web3ReactProvider getLibrary={getLibrary}>
+      <Account triedToEagerConnect={triedToEagerConnect} />
+    </Web3ReactProvider>
   );
 };
 
