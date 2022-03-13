@@ -37,7 +37,8 @@ const Account = ({ triedToEagerConnect }: AccountProps) => {
     activate(connectors.Injected, undefined, true).catch((error) => {
       // ignore the error if it's a user rejected request
       if (error instanceof UserRejectedRequestError) {
-        setConnecting(false);
+        activate(connectors.Injected);
+        // setConnecting(false);
       } else {
         setError(error);
       }
@@ -47,7 +48,9 @@ const Account = ({ triedToEagerConnect }: AccountProps) => {
   if (error) {
     return error instanceof UnsupportedChainIdError ? (
       <div>Unsupported chain</div>
-    ) : null;
+    ) : (
+      <div>Error...</div>
+    );
   }
 
   if (!triedToEagerConnect) {
