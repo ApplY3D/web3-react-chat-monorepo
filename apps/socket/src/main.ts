@@ -7,7 +7,7 @@ import { authenticateJWT } from '@blockchain-chat/middlewares';
 import { Server } from 'socket.io';
 import { accessTokenSecret } from './constants';
 
-const io = new Server(3334);
+const io = new Server({ cors: { origin: '*' } });
 
 io.use((socket, next) => {
   let status = 0;
@@ -39,3 +39,5 @@ io.on('connection', (socket) => {
     console.log(socket.id, 'disconnect');
   });
 });
+
+io.listen(3334);
