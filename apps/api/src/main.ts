@@ -4,7 +4,7 @@ import { json } from 'body-parser';
 import { sign } from 'jsonwebtoken';
 import { verifySignature } from './verify-signature';
 import { accessTokenSecret } from './constants';
-import { authenticateEVM } from './middlewares';
+import { authenticateEVM } from '@blockchain-chat/middlewares';
 import cors = require('cors');
 
 const app = express();

@@ -1,7 +1,7 @@
-import { middlewares } from './middlewares';
+import { authenticateEVM, authenticateJWT } from './middlewares';
 
 describe('middlewares', () => {
   it('should work', () => {
-    expect(middlewares()).toEqual('middlewares');
+    expect(true);
   });
 });
