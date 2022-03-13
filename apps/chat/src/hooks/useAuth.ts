@@ -1,6 +1,7 @@
 import { useWeb3React } from '@web3-react/core';
 import { Web3Provider } from '@ethersproject/providers';
 import { useState } from 'react';
+import { useSocket } from './useSocket';
 
 async function startLogin({ evm }: { evm: string }) {
   return fetch('http://localhost:3333/login-evm/message', { headers: { evm } })
@@ -26,6 +27,7 @@ async function getJwtFromServer(data: { evm: string; signature: string }) {
 
 export const useAuth = () => {
   const [jwt, setJwt] = useState<string | null>(null);
+  const { connect, disconnect } = useSocket();
   const { account, library, deactivate } = useWeb3React<Web3Provider>();
 
   const isWalletConnected = typeof account === 'string' && !!library;
@@ -46,11 +48,13 @@ export const useAuth = () => {
 
     const { jwt } = await getJwtFromServer({ evm: <string>account, signature });
     setJwt(jwt);
+    connect({ jwt });
   }
 
   async function logout() {
     deactivate();
     setJwt(null);
+    disconnect({ clearAuth: true });
   }
 
   return { jwt, isWalletConnected, login, logout };
