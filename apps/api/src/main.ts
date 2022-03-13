@@ -5,9 +5,11 @@ import { sign } from 'jsonwebtoken';
 import { verifySignature } from './verify-signature';
 import { accessTokenSecret } from './constants';
 import { authenticateEVM } from './middlewares';
+import cors = require('cors');
 
 const app = express();
 app.use(json());
+app.use(cors());
 
 const STORE = {};
 
