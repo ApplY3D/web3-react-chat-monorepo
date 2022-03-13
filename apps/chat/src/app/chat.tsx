@@ -29,18 +29,18 @@ export const Chat = () => {
         <h4 key={i}>{m}</h4>
       ))}
 
-      {/* {socket?.connected ? ( */}
-      <form onSubmit={sendMessage} action="">
-        <input
-          value={message}
-          onChange={(e) => setMessage(e.target.value)}
-          type="text"
-        />
-        <button>send</button>
-      </form>
-      {/* ) : (
+      {socket?.connected ? (
+        <form onSubmit={sendMessage} action="">
+          <input
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
+            type="text"
+          />
+          <button>send</button>
+        </form>
+      ) : (
         <h3>Login to send messages</h3>
-      )} */}
+      )}
     </div>
   );
 };
