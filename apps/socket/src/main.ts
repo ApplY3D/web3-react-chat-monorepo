@@ -3,16 +3,27 @@
  * This is only a minimal backend to get started.
  */
 
-import * as express from 'express';
+import { authenticateJWT } from '@blockchain-chat/middlewares';
+import { Server } from 'socket.io';
+import { accessTokenSecret } from './constants';
 
-const app = express();
+const io = new Server(3334);
 
-app.get('/api', (req, res) => {
-  res.send({ message: 'Welcome to socket!' });
+io.use((socket, next) => {
+  let status = 0;
+  let message = '';
+  authenticateJWT(accessTokenSecret)(
+    socket.request,
+    // res.status(400).send('error)
+    {
+      status: (s: number) => {
+        status = s;
+        return {
+          send: (m: string) => (message = m),
+        };
+      },
+    },
+    next
+  );
+  next(new Error(status + ': ' + message));
 });
-
-const port = process.env.port || 3333;
-const server = app.listen(port, () => {
-  console.log(`Listening at http://localhost:${port}/api`);
-});
-server.on('error', console.error);
