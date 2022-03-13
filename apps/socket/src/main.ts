@@ -13,7 +13,7 @@ io.use((socket, next) => {
   let status = 0;
   let message = '';
   authenticateJWT(accessTokenSecret)(
-    socket.request,
+    { headers: { authorization: `Bearer ${socket.handshake.auth['jwt']}` } },
     // res.status(400).send('error)
     {
       status: (s: number) => {
@@ -25,7 +25,10 @@ io.use((socket, next) => {
     },
     next
   );
-  next(new Error(status + ': ' + message));
+
+  if (message) {
+    next(new Error(message));
+  }
 });
 
 io.on('connection', (socket) => {
