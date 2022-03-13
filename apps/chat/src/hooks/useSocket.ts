@@ -21,5 +21,5 @@ function disconnect({ clearAuth }: { clearAuth: boolean }) {
 }
 
 export const useSocket = () => {
-  return { connect, disconnect };
+  return { connect, disconnect, socket };
 };
