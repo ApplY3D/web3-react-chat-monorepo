@@ -4,6 +4,7 @@
     "api": "apps/api",
     "api-interfaces": "libs/api-interfaces",
     "chat": "apps/chat",
-    "chat-e2e": "apps/chat-e2e"
+    "chat-e2e": "apps/chat-e2e",
+    "middlewares": "libs/middlewares"
   }
 }

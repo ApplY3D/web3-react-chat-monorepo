@@ -15,7 +15,8 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@blockchain-chat/api-interfaces": ["libs/api-interfaces/src/index.ts"]
+      "@blockchain-chat/api-interfaces": ["libs/api-interfaces/src/index.ts"],
+      "@blockchain-chat/middlewares": ["libs/middlewares/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]
