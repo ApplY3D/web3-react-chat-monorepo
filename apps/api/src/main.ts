@@ -40,8 +40,9 @@ app.post('/login-evm', authenticateEVM, async (req, res) => {
     return res.status(403).send('EVM signature invalid');
   }
 
-  const jwt = sign({ evm: address }, accessTokenSecret);
-  res.json({ jwt });
+  const expiresIn = Math.floor(Date.now() / 1000) + 24 * 60 * 60;
+  const jwt = sign({ evm: address }, accessTokenSecret, { expiresIn });
+  res.json({ jwt, expiresIn });
 });
 
 const port = process.env.port || 3333;
