@@ -2,12 +2,26 @@ import { useWeb3React } from '@web3-react/core';
 import { Web3Provider } from '@ethersproject/providers';
 import { useState } from 'react';
 
-async function startLogin() {
-  return 'Message from server to sign with uniq ID';
+async function startLogin({ evm }: { evm: string }) {
+  return fetch('http://localhost:3333/login-evm/message', { headers: { evm } })
+    .then((r) => r.json())
+    .catch((e) => console.log(e));
 }
 
-async function getJwtFromServer() {
-  return 'JWT';
+async function getJwtFromServer(data: { evm: string; signature: string }) {
+  const { evm, signature } = data;
+
+  return fetch('http://localhost:3333/login-evm', {
+    method: 'POST',
+    headers: {
+      evm,
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ signature }),
+  })
+    .then((r) => r.json())
+    .catch((e) => console.log(e));
 }
 
 export const useAuth = () => {
@@ -17,7 +31,7 @@ export const useAuth = () => {
   const isWalletConnected = typeof account === 'string' && !!library;
 
   async function login() {
-    const message = await startLogin();
+    const { message } = await startLogin({ evm: <string>account });
     let signature;
 
     try {
@@ -30,7 +44,7 @@ export const useAuth = () => {
       return;
     }
 
-    const jwt = await getJwtFromServer();
+    const { jwt } = await getJwtFromServer({ evm: <string>account, signature });
     setJwt(jwt);
   }
 
