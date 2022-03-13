@@ -1,7 +1,9 @@
 import { UnsupportedChainIdError, useWeb3React } from '@web3-react/core';
 import { UserRejectedRequestError } from '@web3-react/injected-connector';
-import { useEffect, useState } from 'react';
+import { Web3Provider } from '@ethersproject/providers';
+import { useCallback, useEffect, useState } from 'react';
 import { connectors } from '../connectors';
+import { useAuth } from '../hooks/useAuth';
 import useMetaMaskOnboarding from '../hooks/useMetaMaskOnboarding';
 
 type AccountProps = {
@@ -9,8 +11,9 @@ type AccountProps = {
 };
 
 const Account = ({ triedToEagerConnect }: AccountProps) => {
-  const { active, error, activate, chainId, account, setError, deactivate } =
-    useWeb3React();
+  const { active, error, activate, chainId, account, setError } =
+    useWeb3React<Web3Provider>();
+  const { jwt, login, logout } = useAuth();
 
   const {
     isMetaMaskInstalled,
@@ -28,6 +31,19 @@ const Account = ({ triedToEagerConnect }: AccountProps) => {
     }
   }, [active, error, stopOnboarding]);
 
+  const connectWallet = useCallback(() => {
+    setConnecting(true);
+
+    activate(connectors.Injected, undefined, true).catch((error) => {
+      // ignore the error if it's a user rejected request
+      if (error instanceof UserRejectedRequestError) {
+        setConnecting(false);
+      } else {
+        setError(error);
+      }
+    });
+  }, [connectors.Injected, activate, setError]);
+
   if (error) {
     return error instanceof UnsupportedChainIdError ? (
       <div>Unsupported chain</div>
@@ -42,21 +58,7 @@ const Account = ({ triedToEagerConnect }: AccountProps) => {
     return (
       <div>
         {isWeb3Available ? (
-          <button
-            disabled={connecting}
-            onClick={() => {
-              setConnecting(true);
-
-              activate(connectors.Injected, undefined, true).catch((error) => {
-                // ignore the error if it's a user rejected request
-                if (error instanceof UserRejectedRequestError) {
-                  setConnecting(false);
-                } else {
-                  setError(error);
-                }
-              });
-            }}
-          >
+          <button disabled={connecting} onClick={connectWallet}>
             {isMetaMaskInstalled ? 'Connect to MetaMask' : 'Connect to Wallet'}
           </button>
         ) : (
@@ -76,7 +78,8 @@ const Account = ({ triedToEagerConnect }: AccountProps) => {
       >
         {account}
       </a>
-      <button onClick={deactivate}>disconnect</button>
+      <button onClick={logout}>disconnect</button>
+      {jwt ? 'logged in' : <button onClick={login}>login</button>}
     </div>
   );
 };
